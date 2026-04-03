@@ -1,0 +1,64 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      target: runtime
+    image: ai-product-recommendation-engine:latest
+    container_name: recommendation_api
+    init: true
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      APP_ENV: production
+      DEBUG: "false"
+      LOG_LEVEL: INFO
+      DATABASE_URL: postgresql://postgres:postgres@db:5432/recommendations
+      REDIS_URL: redis://redis:6379/0
+      EMBEDDING_MODEL_NAME: sentence-transformers/all-MiniLM-L6-v2
+      LLM_MODEL_NAME: google/flan-t5-base
+      LLM_DEVICE: "-1"
+      RESET_INGESTED_PRODUCTS_ON_STARTUP: "true"
+    ports:
+      - "${API_PORT:-8000}:8000"
+    volumes:
+      - hf_cache:/root/.cache/huggingface
+
+  db:
+    image: pgvector/pgvector:pg16
+    container_name: recommendation_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: recommendations
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d recommendations"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: recommendation_redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  pg_data:
+  redis_data:
+  hf_cache:

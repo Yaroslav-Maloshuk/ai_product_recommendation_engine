@@ -1,0 +1,36 @@
+# Python cache
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual environments and local env files
+venv/
+.venv/
+env/
+.env/
+.env
+
+# Build and test artifacts
+build/
+dist/
+frontend/node_modules/
+frontend/dist/
+*.egg-info/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+htmlcov/
+
+# VCS and IDE
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# OS and local runtime files
+.DS_Store
+*.log
