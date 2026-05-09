@@ -10,9 +10,7 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![Docker](https://img.shields.io/badge/Docker-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
 
-A full-stack semantic product recommendation service built with FastAPI, PostgreSQL + pgvector, Hugging Face models, and a React/Tailwind web UI.
-
-It ingests product catalogs from JSON, CSV, or an external SQL source, computes embeddings, runs vector similarity search with optional filters, and returns ranked recommendations with grounded reasons and an optional summary.
+Built a full-stack AI product recommendation engine processing catalogs from 4 ingestion sources (JSON upload, CSV upload, JSON array, external SQL db_source) — computing embeddings in batches of 64 via sentence-transformers/all-MiniLM-L6-v2, storing vectors in PostgreSQL 16 + pgvector, and serving ranked results through 5 REST endpoints with 5 filter dimensions (category, min/max price, currency, tags), a configurable Top-K up to 25 results, and optional Redis response caching with a 300-second TTL.Delivered an explainable, LLM-grounded recommendation layer (google/flan-t5-base, max 192 tokens per reason) that goes beyond raw similarity scores — supporting both standard JSON and NDJSON streaming with 3 event types (recommendation / summary / done), served from a 6-layer FastAPI backend and a React 18 + TypeScript + Tailwind UI, all containerized across 3 Docker services (api, db, redis) and deployed in 1 command.
 
 ## What This Project Does
 
